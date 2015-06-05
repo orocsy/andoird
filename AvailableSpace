@@ -1,0 +1,53 @@
+package com.example.availablespace;
+
+import java.io.File;
+
+import android.app.Activity;
+import android.hardware.Camera.Size;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
+import android.text.format.Formatter;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+
+public class MainActivity extends Activity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        long blocks;
+        long blockSize;
+        long availableBlocks;
+        
+        File dir = Environment.getExternalStorageDirectory();
+        StatFs sfs = new StatFs(dir.getPath());
+        
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+        	availableBlocks = sfs.getAvailableBlocksLong();
+        	blockSize = sfs.getBlockSizeLong(); 
+        	blocks = sfs.getBlockCountLong();
+        }
+        else{
+        	availableBlocks = sfs.getAvailableBlocks();
+        	blockSize = sfs.getBlockSize(); 
+        	blocks = sfs.getBlockCount();
+        }
+        String totalBlockSize = formatSize(availableBlocks*blockSize);
+        
+        TextView tv = (TextView) findViewById(R.id.tv_space);
+        tv.setText(totalBlockSize);
+    }
+
+	public String formatSize(long l) {
+		// TODO Auto-generated method stub
+		return Formatter.formatFileSize(this, l);
+	}
+
+   
+}
